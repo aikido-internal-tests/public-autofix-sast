@@ -1,4 +1,5 @@
 import { readFileSync } from 'fs';
+import * as path from 'path';
 import { Logger } from './logger';
 
 interface ReportConfig {
@@ -30,7 +31,13 @@ export class ReportGenerator {
 
 	public loadTemplate(templateName: string): string {
 		this.logger.info(`Loading template ${templateName}`);
-		const content = readFileSync(`${this.config.outputDir}/${templateName}`, 'utf-8');
+		const baseFull = path.resolve(this.config.outputDir);
+		const target = path.join(baseFull, templateName);
+		const rel = path.relative(baseFull, target);
+		if (rel === '..' || rel.startsWith(`..${path.sep}`) || path.isAbsolute(rel)) {
+			throw new Error('Invalid file path');
+		}
+		const content = readFileSync(target, 'utf-8');
 		this.generatedCount++;
 		return this.formatOutput(content);
 	}
