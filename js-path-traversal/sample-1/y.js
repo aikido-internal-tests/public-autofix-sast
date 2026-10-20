@@ -2,6 +2,11 @@ const fs = require('fs');
 const path = require('path');
 const express = require('express');
 
+const isPathInside = (baseDir, targetPath) => {
+    const rel = path.relative(path.resolve(baseDir), path.resolve(targetPath));
+    return !(rel === '..' || rel.startsWith(`..${path.sep}`) || path.isAbsolute(rel));
+};
+
 /**
  * Safely reads a file after checking for path traversal attempts
  * @param {string} filePath - The path to the file to read
@@ -24,6 +29,9 @@ function safeRead(filePath) {
  */
 function function1(userId) {
     const filePath = path.join(__dirname, userId);
+    if (!isPathInside(__dirname, filePath)) {
+        throw new Error('Invalid file path');
+    }
     return safeRead(filePath);
 }
 
@@ -34,6 +42,9 @@ function function1(userId) {
  */
 function function2(userId) {
     const filePath = path.resolve(__dirname, userId);
+    if (!isPathInside(__dirname, filePath)) {
+        throw new Error('Invalid file path');
+    }
     return safeRead(filePath);
 }
 
