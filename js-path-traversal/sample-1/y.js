@@ -1,6 +1,7 @@
 const fs = require('fs');
 const path = require('path');
 const express = require('express');
+const helmet = require('helmet');
 
 /**
  * Safely reads a file after checking for path traversal attempts
@@ -40,6 +41,8 @@ function function2(userId) {
 // Create Express app
 const app = express();
 const port = 5692;
+
+app.use(helmet());
 
 // Add error handling middleware
 app.use((err, req, res, next) => {

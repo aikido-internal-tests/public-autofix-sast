@@ -1,10 +1,12 @@
 import * as fs from 'fs';
 import * as path from 'path';
 import express from 'express';
+import helmet from 'helmet';
 
 const DATA_DIR = '/var/lib/app/data';
 
 const app = express();
+app.use(helmet());
 
 app.post('/documents/:name/replace', express.json(), (req, res) => {
 	const documentPath = path.join(DATA_DIR, req.params.name);
